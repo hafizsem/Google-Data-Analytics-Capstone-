@@ -1,0 +1,106 @@
+---
+title: "CaseStudy02_GDA"
+output: html_notebook
+---
+
+Case Study 2: How Can a Wellness Technology
+Company Play It Smart?
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+```
+
+Using Daily activity, calories, intensities and steps
+
+```{r}
+act <- read_csv("C:/Users/Hafiz Asyraaf/OneDrive/Desktop/UMP DOC/Google Data Analytics Cert/Dataset Capstone/bellabeat/dailyActivity_merged.csv")
+cal<- read_csv("C:/Users/Hafiz Asyraaf/OneDrive/Desktop/UMP DOC/Google Data Analytics Cert/Dataset Capstone/bellabeat/dailyCalories_merged.csv")
+int<- read_csv("C:/Users/Hafiz Asyraaf/OneDrive/Desktop/UMP DOC/Google Data Analytics Cert/Dataset Capstone/bellabeat/dailyIntensities_merged.csv")
+step<- read_csv("C:/Users/Hafiz Asyraaf/OneDrive/Desktop/UMP DOC/Google Data Analytics Cert/Dataset Capstone/bellabeat/dailySteps_merged.csv")
+view(int)
+view(act)
+view(cal)
+view(step)
+
+```
+Exploring dataset
+
+
+```{r}
+n_distinct(act$Id)
+n_distinct(cal$Id)
+n_distinct(int$Id)
+n_distinct(step$Id)
+
+```
+
+This information tells us about number participants in each data sets. So, based on the output, the duplicated dataset shows 33 for all data.
+
+```{r}
+# activity
+
+summary(act)
+
+summary(cal)
+
+summary(int)
+
+summary(step)
+
+```
+Vizualize
+```{r}
+ggplot(data=merged_data, aes(x=TotalMinutesAsleep, y=SedentaryMinutes)) + 
+geom_point(color='darkblue') + geom_smooth() +
+  labs(title="Minutes Asleep vs. Sedentary Minutes")
+
+```
+Correlation between total steps and calories. The more steps, the more calories burned.
+
+```{r}
+library(ggplot2)
+
+ggplot(data = act, aes(x = TotalSteps)) +
+  geom_line(aes(y = SedentaryMinutes, LightlyActiveMinutes, FairlyActiveMinutes, VeryActiveMinutes, color = "Y1")) +
+  geom_line(aes(y = LightlyActiveMinutes, color = "Y2")) +
+  geom_line(aes(y = FairlyActiveMinutes, color = "Y3")) +
+  geom_line(aes(y = VeryActiveMinutes, color = "Y4"))
+  labs(title = "Line Plot with Multiple Y-axes", x = "X Axis Label") +
+  scale_color_manual(values = c("Y1" = "blue", "Y2" = "red", "Y3" = "green", "")) +
+  theme_minimal()
+
+```
+
+```{r}
+
+library(ggplot2)
+
+# Assuming 'cal' is your data frame
+# Replace 'ActivityDay' and 'Calories' with your actual column names
+
+# Create the bar plot
+p <- ggplot(data = cal, aes(x = ActivityDay, y = Calories)) +
+  geom_bar(stat = "identity", fill = "blue", alpha = 0.7) +
+  labs(title = "Bar Plot of Calories by Activity Day", x = "Activity Day", y = "Calories") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Find the day with the highest and lowest calories
+highest_calories <- cal$ActivityDay[which.max(cal$Calories)]
+lowest_calories <- cal$ActivityDay[which.min(cal$Calories)]
+
+# Add labels for highest and lowest values
+p +
+  geom_text(aes(label = "Highest", y = max(cal$Calories) + 50), 
+            data = data.frame(ActivityDay = highest_calories), 
+            vjust = -0.5, color = "darkgreen", size = 4) +
+  geom_text(aes(label = "Minimum", y = min(cal$Calories) - 50), 
+            data = data.frame(ActivityDay = lowest_calories), 
+            vjust = 1.5, color = "red", size = 4)
+
+```
+
